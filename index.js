@@ -87,6 +87,60 @@ app.post('/send-alert', async(req, res) => {
 
 });
 
+
+app.post('/send-support', async(req, res) => {
+  try {
+      const { name, email, phoneNumber, problemDescription } = req.body;
+      
+      console.log('Support request from:', name);
+      console.log('Contact:', email, phoneNumber);
+      
+      const mailOptions = {
+        from: '"Safe Ride Support System" <support@saferide.com>',
+        to: 'jintujoseph03@gmail.com',
+        subject: '📝 New Support Request - Safe Ride',
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 5px;">
+            <div style="text-align: center; margin-bottom: 20px;">
+              <h1 style="color: #007bff;">New Support Request</h1>
+            </div>
+            
+            <h3>User Details:</h3>
+            <p>
+              <strong>Name:</strong> ${name}<br>
+              <strong>Email:</strong> ${email}<br>
+              <strong>Phone Number:</strong> ${phoneNumber}
+            </p>
+            
+            <h3>Problem Description:</h3>
+            <p style="background-color: #f8f9fa; padding: 15px; border-radius: 4px;">
+              ${problemDescription}
+            </p>
+            
+            <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e0e0e0; font-size: 12px; color: #777;">
+              <p>Safe Ride - Support System</p>
+            </div>
+          </div>
+        `
+      };
+      
+      // Send the email
+      await transporter.sendMail(mailOptions);
+      
+      res.json({ 
+        success: true, 
+        message: 'Support request sent successfully'
+      });
+    } catch (error) {
+      console.error('Error sending support email:', error);
+      res.status(500).json({ 
+        success: false, 
+        message: 'Failed to send support email',
+        error: error.message
+      });
+    }
+});
+
 app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);
 });
